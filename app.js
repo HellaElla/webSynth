@@ -1,17 +1,13 @@
 // Create the 4-pole low-pass filter by cascading four Tone.Filters
-const filter1 = new Tone.Filter(1000, "lowpass").toDestination();
-const filter2 = new Tone.Filter(1000, "lowpass").toDestination();
-const filter3 = new Tone.Filter(1000, "lowpass").toDestination();
-const filter4 = new Tone.Filter(1000, "lowpass").toDestination();
+const filter1 = new Tone.Filter(1000, "lowpass",-48).toDestination();
+
 
 // Connect the filters in series (cascading)
-filter1.connect(filter2);
-filter2.connect(filter3);
-filter3.connect(filter4);
+//filter1.connect(filter2);
 
 // Create a gain node to normalize the output
 const gain = new Tone.Gain(0.4).toDestination(); // Start with 1 for unity gain
-filter4.connect(gain); // Connect the last filter to the gain node
+filter1.connect(gain); // Connect the last filter to the gain node
 
 // Create a limiter node to ensure the audio doesn't exceed a threshold
 const limiter = new Tone.Limiter(-6.0).toDestination(); // Limit output at -0.5dB
@@ -49,12 +45,12 @@ const synth2 = new Tone.Synth({
     },
 }).connect(filter1); 
 
-synth1.volume.value = -6.0;
-synth2.volume.value = -6.0;
+synth1.volume.value = -12.0;
+synth2.volume.value = -12.0;
 
 
 const reverbMixGain = new Tone.Gain(0.8).toDestination();
-filter4.connect(reverb);
+filter1.connect(reverb);
 reverb.connect(reverbMixGain);
 // Control sliders for frequency and resonance (updated for 4-pole filter)
 const filterFrequencySlider = document.getElementById('filterFrequencySlider');
@@ -101,15 +97,15 @@ function updateFilter() {
     
     // Apply values to all 4 filters in the chain
     filter1.frequency.setValueAtTime(frequency, Tone.now());
-    filter2.frequency.setValueAtTime(frequency, Tone.now());
-    filter3.frequency.setValueAtTime(frequency, Tone.now());
-    filter4.frequency.setValueAtTime(frequency, Tone.now());
+    //filter2.frequency.setValueAtTime(frequency, Tone.now());
+    //filter3.frequency.setValueAtTime(frequency, Tone.now());
+    //filter4.frequency.setValueAtTime(frequency, Tone.now());
 
     // Apply resonance (Q factor) to all filters
     filter1.Q.setValueAtTime(resonance, Tone.now());
-    filter2.Q.setValueAtTime(resonance, Tone.now());
-    filter3.Q.setValueAtTime(resonance, Tone.now());
-    filter4.Q.setValueAtTime(resonance, Tone.now());
+    //filter2.Q.setValueAtTime(resonance, Tone.now());
+    //filter3.Q.setValueAtTime(resonance, Tone.now());
+    //filter4.Q.setValueAtTime(resonance, Tone.now());
 
     // Update the displayed values
     filterFrequencyValue.textContent = frequency;
@@ -326,10 +322,10 @@ reverbMixSlider.addEventListener('input', updateReverbMix);
 updateReverbMix();
 
 window.addEventListener('keydown', (e) => {
-    const frequency = keyToFrequency[e.key.toLowerCase()];  // Make sure to handle uppercase/lowercase
-    if (frequency) {
-       playNoteByFrequency(frequency);  // Ensure the function is invoked
-    } else {
-       console.log(`No note mapped for the key: ${e.key}`);
-    }
- });
+   const frequency = keyToFrequency[e.key.toLowerCase()];  // Make sure to handle uppercase/lowercase
+   if (frequency) {
+      playNoteByFrequency(frequency);  // Ensure the function is invoked
+   } else {
+      console.log(`No note mapped for the key: ${e.key}`);
+   }
+});
